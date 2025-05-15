@@ -1,25 +1,31 @@
 class Solution {
 public:
     bool isValid(string s) {
-        
-        stack<char> bracketBox;
-        int length = s.length();
 
-        for (int i=0; i<length; i++){
-            if (bracketBox.empty()){
-                bracketBox.push(s[i]);
+       stack<char> balance;
+       int size = s.length();
+
+       for (int i=0; i<size; i++){
+            if (s[i]=='(' || s[i]=='{' || s[i]=='['){
+               balance.push(s[i]);
             }
-            else if ((bracketBox.top()=='(' && s[i]==')') || (bracketBox.top()=='{' && s[i]=='}') || (bracketBox.top()=='[' && s[i]==']')){
-                bracketBox.pop();
+            else if (balance.empty()){
+                return false;
             }
             else{
-                bracketBox.push(s[i]);
+                if( (balance.top()=='(' && s[i]==')')  ||  (balance.top()=='{' && s[i]=='}')  || (balance.top()=='[' && s[i]==']')){
+                   balance.pop();
+                }
+                else{
+                    return false;
+                }
             }
-        }
+       }
 
-        if (bracketBox.empty()){
-            return true;
-        }
-        return false;
+       if (balance.empty()){
+           return true;
+       }
+       return false;
+
     }
 };

@@ -1,31 +1,21 @@
 class Solution {
 public:
     bool isValid(string s) {
+        stack<char> validator;
+        int n = s.size();
 
-       stack<char> balance;
-       int size = s.length();
-
-       for (int i=0; i<size; i++){
-            if (s[i]=='(' || s[i]=='{' || s[i]=='['){
-               balance.push(s[i]);
-            }
-            else if (balance.empty()){
-                return false;
-            }
-            else{
-                if( (balance.top()=='(' && s[i]==')')  ||  (balance.top()=='{' && s[i]=='}')  || (balance.top()=='[' && s[i]==']')){
-                   balance.pop();
-                }
-                else{
+        for (int i=0; i<n; i++){
+            if (s[i] == '(' || s[i] == '{' || s[i] == '['){
+                validator.push(s[i]);
+            } else {
+                if ((!validator.empty()) && ((validator.top()=='(' && s[i]==')') || (validator.top()=='{' && s[i]=='}') || (validator.top()=='[' && s[i]==']')) ){
+                    validator.pop();
+                } else {
                     return false;
                 }
             }
-       }
+        }
 
-       if (balance.empty()){
-           return true;
-       }
-       return false;
-
+        return validator.empty();
     }
 };
