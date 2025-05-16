@@ -1,28 +1,30 @@
 class Solution {
-public:
-    bool solve(vector<int> &nums, vector<vector<int>> &dp, int n, int sum){
-        if (sum < 0){
-            return false;
-        } else if (n==-1){
-            return sum==0;
-        } else if (dp[n][sum] != -1){
-            return dp[n][sum];
-        } else {
-            return dp[n][sum] = solve(nums, dp, n-1, sum) || solve(nums, dp, n-1, sum-nums[n]);
-        }
-    }
-
-    bool canPartition(vector<int>& nums) {
-        int n = nums.size(), sum = 0;
+private:
+    int getSum(vector<int> &nums, int n){
+        int sum = 0;
         for (int i=0; i<n; i++){
             sum = sum + nums[i];
         }
+        return sum;
+    }
 
-        if (sum & 1){
-            return false; 
+    bool solve(vector<int> &nums, vector<vector<int>> &dp, int index, int current, int bias){
+        if (index < 0){
+            return current==0;
+        } else if (dp[index][current+bias] != -1){
+            return dp[index][current+bias]==0 ? false : true;
+        } else {
+            bool first = solve(nums, dp, index-1, current+nums[index], bias);
+            bool second = solve(nums, dp, index-1, current-nums[index], bias);
+            dp[index][current+bias] = (first || second) ? 1 : 0;
+            return first || second;
         }
+    }
 
-        vector<vector<int>> dp(n, vector<int>(sum/2+1, -1));
-        return solve(nums, dp, n-1, sum/2);
+public:
+    bool canPartition(vector<int>& nums) {
+        int n = nums.size(), sum = getSum(nums, n), current = 0;
+        vector<vector<int>> dp(n, vector<int>(2*sum+1, -1));
+        return solve(nums, dp, n-1, current, sum);
     }
 };
