@@ -4,7 +4,5 @@
  * @return {number[]}
  */
 var map = function(arr, fn) {
-    const ans = arr.map((element, index)=>fn(element, index));
-
-    return ans;
+    return arr.map(fn);;
 };

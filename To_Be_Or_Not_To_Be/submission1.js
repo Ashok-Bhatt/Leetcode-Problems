@@ -3,21 +3,22 @@
  * @return {Object}
  */
 var expect = function(val) {
-    
-    return {toBe : (val2)=>{
-        if (val===val2){
-            return true;
-        } else {
-            throw Error("Not Equal");
+    return {
+        toBe : (x) => {
+            if (x === val){
+                return true;
+            } else {
+                throw Error("Not Equal");
+            }
+        },
+        notToBe : (x) => {
+            if (x !== val){
+                return true;
+            } else {
+                throw Error("Equal");
+            }
         }
-    }, notToBe : (val2)=>{
-        if (val!==val2){
-            return true;
-        } else {
-            throw Error("Equal");
-        }
-    }};
-
+    }
 };
 
 /**
