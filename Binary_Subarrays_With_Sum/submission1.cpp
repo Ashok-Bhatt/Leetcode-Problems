@@ -1,36 +1,35 @@
 class Solution {
 public:
-    int numSubarraysWithSum(vector<int>& nums, int goal) {
-        int n = nums.size(), i = 0, j = 0, ans = 0, sum = 0, currentSum = 0;
-        unordered_map<int, int> lastOccurrence;
+    int solve(vector<int> &nums, int n, int goal){
 
-        for (int i=0; i<n; i++){
-            sum = sum + nums[i];
-            lastOccurrence[sum] = i;
-        }
+        if (goal < 0) return 0;
 
-        sum = 0;
-
-        while (j < n){
-            currentSum = currentSum + nums[j];
+        int i = 0, j = 0, ans = 0, sum = 0;
+        while (j<n){
             sum = sum + nums[j];
+
+            if (sum <= goal){
+                ans = ans + j - i + 1;
+            }
+
+            while (i<=j && sum > goal){
+                sum = sum - nums[i];
+                i++;
+                if (sum <= goal){
+                    ans = ans + j - i + 1;
+                }
+            }
+
             j++;
 
-            if (currentSum == goal){
-                ans = ans + lastOccurrence[sum] - j + 2;
-                while (currentSum == goal && i<j){
-                    currentSum = currentSum - nums[i];
-                    i++;
-                    if (currentSum == goal && i!=j){
-                        ans = ans + lastOccurrence[sum] - j + 2;
-                    }
-                }
-            } else if (currentSum > goal){
-                currentSum = currentSum - nums[i];
-                i++;
-            }
         }
 
         return ans;
+
+    }
+
+    int numSubarraysWithSum(vector<int>& nums, int goal) {
+        int n = nums.size();
+        return solve(nums, n, goal) - solve(nums, n, goal-1);
     }
 };
