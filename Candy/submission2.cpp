@@ -1,21 +1,38 @@
 class Solution {
 public:
     int candy(vector<int>& ratings) {
-        
-        int n = ratings.size(), ptr=n-2, ans = 0;
-        vector<int> temp(n,1);
 
-        // processing for the left part
-        for (int i=1; i<n; i++){
-            if (ratings[i] > ratings[i-1]) temp[i] = temp[i-1] + 1;
+        int n = ratings.size(), ans = 1, rise = 1, down = 0, i = 1;
+
+        while (i < n){
+
+            // logic for rising slope
+            while (i<n && ratings[i] > ratings[i-1]){
+                ans = ans + ++rise;
+                i++;
+            }
+
+            // slope for slipping slope
+            while (i<n && ratings[i] < ratings[i-1]){
+                ans = ans + ++down;
+                i++;
+            }
+
+            // adjusting the peak comparing the top and foot of the slope
+            if (down>=rise) ans = ans + down - rise + 1;
+
+            // for the case when there is no slope
+            while (i<n && ratings[i]==ratings[i-1]){
+                ans++;
+                i++;
+            }
+            
+            // adjusting the rise and down variables for the next rising and falling slope
+            rise = 1;
+            down = 0;
+
         }
 
-        // processing for the right part
-        for (int i=n-2; i>=0; i--){
-            if (ratings[i] > ratings[i+1]) temp[i] = max(temp[i], temp[i+1]+1);
-            ans = ans + temp[i];
-        }
-
-        return n==1 ? 1 : ans + temp[n-1];
+        return ans;
     }
 };

@@ -1,29 +1,21 @@
 class Solution {
 public:
     int candy(vector<int>& ratings) {
-        int n = ratings.size(), ans = 0;
-        vector<int> left(n,1);
-        vector<int> right(n,1);
+        
+        int n = ratings.size(), ptr=n-2, ans = 0;
+        vector<int> temp(n,1);
 
-        // processing the left array
+        // processing for the left part
         for (int i=1; i<n; i++){
-            if (ratings[i] > ratings[i-1]){
-                left[i] = left[i-1] + 1;
-            }
+            if (ratings[i] > ratings[i-1]) temp[i] = temp[i-1] + 1;
         }
 
-        // processing for right array
+        // processing for the right part
         for (int i=n-2; i>=0; i--){
-            if (ratings[i+1] < ratings[i]){
-                right[i] = right[i+1] + 1;
-            }
+            if (ratings[i] > ratings[i+1]) temp[i] = max(temp[i], temp[i+1]+1);
+            ans = ans + temp[i];
         }
 
-        // Processing the answer
-        for (int i=0; i<n; i++){
-            ans = ans + max(left[i], right[i]);
-        }
-
-        return ans;
+        return n==1 ? 1 : ans + temp[n-1];
     }
 };
