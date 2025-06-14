@@ -1,44 +1,36 @@
 class Solution {
 public:
-    int gap(string &x, string &y){
-        int ans = 0;
-        for (int i=0; i<x.size(); i++){
-            if (x[i] != y[i]){
-                ans++;
-            }
-        }
-
-        return ans;
-    }
-
     int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
-        int n = wordList.size();
-        vector<bool> visited(n);
-        queue<pair<int, int>> q;
+        
+        int n = wordList.size(), m = beginWord.size();
+        unordered_set<string> present;
+        queue<pair<string, int>> q;
 
-        // Initializing queue with one gap words
         for (int i=0; i<n; i++){
-            if (!visited[i] && gap(beginWord, wordList[i]) == 1){
-                q.push({i, 1});
-                visited[i] = true;
-            }
+            present.insert(wordList[i]);   
         }
 
-        // Solving problem until either queue is not empty or we get solution
-        while (!q.empty()){
-            pair<int, int> front = q.front();
-            int index = front.first, value = front.second;
+        q.push({beginWord, 1});
 
-            if (wordList[index] == endWord){
-                return value+1;
-            }
+        while (!q.empty()){
+            pair<string, int> front = q.front();
+            string word = front.first;
+            int level = front.second;
 
             q.pop();
 
-            for (int i=0; i<n; i++){
-                if (!visited[i] && gap(wordList[index], wordList[i]) == 1){
-                    q.push({i, value+1});
-                    visited[i] = true;
+            if (word == endWord){
+                return level;
+            }
+
+            for (int i=0; i<m; i++){
+                for (char j='a'; j<='z'; j++){
+                    string newWord = word;
+                    newWord[i] = j;
+                    if (present.find(newWord) != present.end()){
+                        present.erase(newWord);
+                        q.push({newWord, level+1});
+                    }
                 }
             }
         }
