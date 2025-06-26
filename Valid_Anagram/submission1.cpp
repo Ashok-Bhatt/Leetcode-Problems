@@ -1,23 +1,19 @@
 class Solution {
 public:
     bool isAnagram(string s, string t) {
+        int m = s.size(), n = t.size();
+        unordered_map<char, int> occurrence;
 
-        if (s.size() != t.size()){
-            return false;
-        }
-
-        unordered_map<char, int> mapping;
-        int n = s.size();
+        if (m!=n) return false;
 
         for (int i=0; i<n; i++){
-            mapping[s[i]]++;
+            occurrence[s[i]]++;
+            occurrence[t[i]]--;
         }
 
-        for (int i=0; i<n; i++){
-            if (mapping.find(t[i])==mapping.end() || mapping[t[i]] == 0){
+        for (int i=0; i<26; i++){
+            if (occurrence[i+'a'] != 0){
                 return false;
-            } else {
-                mapping[t[i]]--;
             }
         }
 
