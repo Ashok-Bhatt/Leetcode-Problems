@@ -1,34 +1,28 @@
 class Solution {
 public:
-    bool isFeasibleSolution(unordered_map<char, int> &occurrence, int k, int currentCount){
-        char maxOccurrenceIndex = 'A';
-        for (char i='B'; i<='Z'; i++){
-            if (occurrence[i] > occurrence[maxOccurrenceIndex]){
-                maxOccurrenceIndex = i;
-            }
+    bool isFeasibleSolution(vector<int> &freq, int k){
+        int maxi = 0, sum = 0;
+        for (int i=0; i<26; i++){
+            sum = sum + freq[i];
+            maxi = max(maxi, freq[i]);
         }
-
-        return (currentCount - occurrence[maxOccurrenceIndex]) <= k;
+        return (sum - maxi) <= k;
     }
 
     int characterReplacement(string s, int k) {
-        
-        int n = s.size(), ans = 0, i = 0, j = 0, currentCount = 0;
-        unordered_map<char, int> occurrence;
-        
-        while (j<n){
-            currentCount++;
-            occurrence[s[j]]++;
-            j++;
+        int n = s.size(), i = 0, j = 0, ans = 0;
+        vector<int> freq(26, 0);
 
-            if (isFeasibleSolution(occurrence, k, currentCount)){
+        while (j<n){
+            freq[s[j]-'A']++;
+            j++;
+            if (isFeasibleSolution(freq, k)){
                 ans = max(ans, j-i);
-            } else {
-                while (!isFeasibleSolution(occurrence, k, currentCount)){
-                    currentCount--;
-                    occurrence[s[i]]--;
-                    i++;
-                }
+            }
+
+            while (!isFeasibleSolution(freq, k)){
+                freq[s[i]-'A']--;
+                i++;
             }
         }
 

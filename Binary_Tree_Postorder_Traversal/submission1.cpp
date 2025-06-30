@@ -11,17 +11,36 @@
  */
 class Solution {
 public:
-    void solve(TreeNode* root, vector<int> &ans){
-        if (root){
-            solve(root->left, ans);
-            solve(root->right, ans);
-            ans.push_back(root->val);
-        }
-    }
-
     vector<int> postorderTraversal(TreeNode* root) {
         vector<int> ans;
-        solve(root, ans);
+        stack<TreeNode*> st;
+        unordered_map<TreeNode*, int> occurrence;
+
+        if (root){
+            st.push(root);
+            occurrence[root] = 0;
+        }
+
+        while (!st.empty()){
+            TreeNode* top = st.top();
+            if (occurrence[top] == 0){
+                occurrence[top]++;
+                if (top->left){
+                    st.push(top->left);
+                    occurrence[top->left] = 0;
+                }
+            } else  if (occurrence[top] == 1){
+                occurrence[top]++;
+                if (top->right){
+                    st.push(top->right);
+                    occurrence[top->right] = 0;
+                }
+            } else {
+                ans.push_back(top->val);
+                st.pop();
+            }
+        }
+
         return ans;
     }
 };
