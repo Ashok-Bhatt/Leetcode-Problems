@@ -1,59 +1,56 @@
 class Solution {
 public:
-    bool isFeasibleSolution(unordered_map<char, int> &maxOccurrence, unordered_map<char, int> &occurrence){
+    bool isSolution(unordered_map<char, int> &freq1, unordered_map<char, int> &freq2){
 
-        for (auto x : maxOccurrence){
-            char character = x.first;
-            int maxCount = x.second;
-            if (occurrence[character] < maxCount){
+        for (int i=0; i<26; i++){
+            if (freq1[i+'a']>freq2[i+'a'] || freq1[i+'A']>freq2[i+'A']){
                 return false;
             }
         }
 
         return true;
-
     }
 
     string minWindow(string s, string t) {
-        pair<int, int> ans= {-1, -1};
-        int m = s.size(), n = t.size(), i = 0, j = 0;
-        string ansString;
-        unordered_map<char, int> occurrence;
-        unordered_map<char, int> maxOccurrence;
+        int n = s.size(), m = t.size(), i = 0, j = 0;
+        unordered_map<char, int> freq1, freq2;
+        int ansIndex = 0, ansLength = INT_MAX;
+        string ans = "";
 
-        for (int i=0; i<n; i++){
-            maxOccurrence[t[i]]++;
+        for (int ptr=0; ptr<m; ptr++){
+            freq1[t[ptr]]++;
         }
 
-        while (i<m){
+        while (j<n){
 
-            if (j<m){
-                if (maxOccurrence.find(s[j]) != maxOccurrence.end()){
-                    occurrence[s[j]]++;
-                }
-                j++;
-            } else if (!isFeasibleSolution(maxOccurrence, occurrence)){
-                break;
+            freq2[s[j]]++;
+            j++;
+
+            if (isSolution(freq1, freq2) && j-i < ansLength){
+                ansLength = j-i;
+                ansIndex = i;
             }
 
-            while (isFeasibleSolution(maxOccurrence, occurrence)){
-
-                if ((ans.first == -1) || (ans.second-ans.first+1 > j-i)){
-                    ans = {i, j-1};
+            while (isSolution(freq1, freq2)){
+                freq2[s[i]]--;
+                if (freq2[s[i]] == 0){
+                    freq2.erase(s[i]);
                 }
-
-                occurrence[s[i]]--;
                 i++;
 
+                if (isSolution(freq1, freq2) && j-i<ansLength){
+                    ansLength = j-i;
+                    ansIndex = i;
+                }
             }
         }
 
-        if (ans.first == -1) return ansString;
+        if (ansLength == INT_MAX) return "";
 
-        for (int i=ans.first; i<=ans.second; i++){
-            ansString.push_back(s[i]);
+        for (int ptr=ansIndex; ptr<ansIndex+ansLength; ptr++){
+            ans.push_back(s[ptr]);
         }
 
-        return ansString;
+        return ans;
     }
 };
