@@ -24,17 +24,23 @@ public:
         while (!st.empty()){
 
             TreeNode* top = st.top();
+
             if (occurrence[top] == 0){
-                st.pop();
                 ans.push_back(top->val);
-            }
-
-            if (top->right){
-                st.push(top->right);
-            }
-
-            if (top->left){
-                st.push(top->left);
+                occurrence[top]++;
+            } else if (occurrence[top] == 1){
+                if (top->left){
+                    st.push(top->left);
+                    occurrence[top->left] = 0;
+                }
+                occurrence[top]++;
+            } else {
+                st.pop();
+                if (top->right){
+                    st.push(top->right);
+                    occurrence[top->right] = 0;
+                }
+                occurrence[top]++;
             }
         }
 

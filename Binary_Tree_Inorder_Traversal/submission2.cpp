@@ -11,17 +11,32 @@
  */
 class Solution {
 public:
-    void solve(TreeNode* root, vector<int> &ans){
-        if (root){
-            solve(root->left, ans);
-            ans.push_back(root->val);
-            solve(root->right, ans);
-        }
-    }
-
     vector<int> inorderTraversal(TreeNode* root) {
         vector<int> ans;
-        solve(root, ans);
+        stack<TreeNode*> st;
+        unordered_set<TreeNode*> occurrence;
+
+        if (root){
+            st.push(root);
+        }
+
+        while (!st.empty()){
+            TreeNode* top = st.top();
+
+            if (occurrence.find(top) == occurrence.end()){
+                occurrence.insert(top);
+                if (top->left){
+                    st.push(top->left);
+                }
+            } else {
+                ans.push_back(top->val);
+                st.pop();
+                if (top->right){
+                    st.push(top->right);
+                }
+            }
+        }
+
         return ans;
     }
 };

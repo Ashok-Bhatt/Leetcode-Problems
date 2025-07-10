@@ -1,17 +1,18 @@
 class Solution {
 public:
-    char kthCharacter(int k) {
-        int count = 1, n;
-        string x = "a";
-        while (count < k){
-            n = x.size();
-            for (int i=0; i<n; i++){
-                char nextCharacter = ((x[i]-'a')+1)%26 + 'a';
-                x.push_back(nextCharacter);
-                count = x.size();
-            }
+    int solve(int k, int x){
+        if (k<=1){
+            return 0;
+        } else if (k<=x){
+            return solve(k, x/2);
+        } else {
+            return (1 + solve(k-x, x/2)) % 26;
         }
+    }
 
-        return x[k-1];
+    char kthCharacter(int k) {
+        int x = 1;
+        while (2*x < k) x = 2*x;
+        return solve(k, x) + 'a';
     }
 };

@@ -13,27 +13,22 @@ class Solution {
 public:
     vector<int> inorderTraversal(TreeNode* root) {
         vector<int> ans;
+        TreeNode* node = root;
         stack<TreeNode*> st;
-        unordered_set<TreeNode*> occurrence;
 
-        if (root){
+        if (root) {
             st.push(root);
+            node = node->left;   
         }
 
-        while (!st.empty()){
-            TreeNode* top = st.top();
-
-            if (occurrence.find(top) == occurrence.end()){
-                occurrence.insert(top);
-                if (top->left){
-                    st.push(top->left);
-                }
+        while (!st.empty() || node){
+            if (node){
+                st.push(node);
+                node = node->left;
             } else {
-                ans.push_back(top->val);
+                ans.push_back(st.top()->val);
+                node = st.top()->right;
                 st.pop();
-                if (top->right){
-                    st.push(top->right);
-                }
             }
         }
 
