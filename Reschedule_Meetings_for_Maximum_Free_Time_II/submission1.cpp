@@ -1,61 +1,43 @@
 class Solution {
-typedef pair<int, int> Pair;
-
 public:
-    vector<Pair> getMaxGaps(vector<int>& startTime, vector<int> &endTime, int n, int eventTime){
-
-        priority_queue<Pair, vector<Pair>, greater<Pair>> mini;
-        vector<Pair> maxgaps;
-
-        for (int i=0; i<n; i++){
-            if (mini.size() < 3){
-                if (i==0){
-                    mini.push({startTime[i], i});
-                } else {
-                    mini.push({startTime[i]-endTime[i-1], i});
-                }
-            } else {
-                if (mini.top().first < startTime[i]-endTime[i-1]){
-                    mini.pop();
-                    mini.push({startTime[i]-endTime[i-1], i});
-                }
+    int getMaxPossibleGap(int block, int index1, int index2, vector<pair<int, int>> &gaps, priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq, int n){
+        int ans = 0;
+        while (!pq.empty()){
+            pair<int, int> top = pq.top();
+            int value = top.first, index = top.second;
+            pq.pop();
+            if (index!=index1 && index!=index2 && value>=block){
+                ans = max(ans, block);
             }
         }
-
-        if (mini.size() < 3 || mini.top().first < eventTime-endTime[n-1]){
-            mini.pop();
-            mini.push({eventTime - endTime[n-1], n});
-        }
-
-        while (!mini.empty()){
-            Pair top = mini.top();
-            maxgaps.push_back(top);
-            mini.pop();
-        }
-
-        return maxgaps;
+        return ans;
     }
 
     int maxFreeTime(int eventTime, vector<int>& startTime, vector<int>& endTime) {
-        
         int n = startTime.size(), ans = 0;
-        vector<Pair> maxgaps = getMaxGaps(startTime, endTime, n, eventTime);
+        vector<pair<int, int>> gaps(n+1, {startTime[0], 0});
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
 
         for (int i=0; i<n; i++){
-            int blockSize = endTime[i] - startTime[i];
-            int gap1 = (i==0) ? startTime[i] : startTime[i]-endTime[i-1];
-            int gap2 = (i==n-1) ? eventTime - endTime[i] : startTime[i+1]-endTime[i];
-            for (int j=0; j<maxgaps.size(); j++){
-                if (i==maxgaps[j].second || i+1==maxgaps[j].second){
-                    ans = max(ans, gap1+gap2);
-                } else {
-                    if (blockSize <= maxgaps[j].first){
-                        ans = max(ans, gap1+gap2+blockSize);
-                    } else {
-                        ans = max(ans, gap1+gap2);
-                    }
-                }
+            if (i==n-1){
+                gaps[i+1] = {eventTime - endTime[i], i+1};
+            } else {
+                gaps[i+1] = {startTime[i+1] - endTime[i], i+1};
             }
+        }
+
+        for (int i=0; i<=n; i++){
+            if (pq.size() < 3){
+                pq.push(gaps[i]);
+            } else if (pq.top().first < gaps[i].first){
+                pq.pop();
+                pq.push(gaps[i]);
+            }
+        }
+
+        for (int i=0; i<n; i++){
+            int temp = gaps[i].first + gaps[i+1].first + getMaxPossibleGap(endTime[i]-startTime[i], gaps[i].second, gaps[i+1].second, gaps, pq, n);
+            ans = max(ans, temp);
         }
 
         return ans;

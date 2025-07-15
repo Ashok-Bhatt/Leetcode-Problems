@@ -1,0 +1,15 @@
+class Solution(object):
+    def strStr(self, haystack, needle):
+        
+        last_index = len(haystack) - len(needle) + 1
+        
+        for i in range(last_index):
+            
+            j = 0
+            while (j<len(needle) and haystack[i+j]==needle[j]):
+                j+=1
+            
+            if j==len(needle):
+                return i
+        
+        return -1
